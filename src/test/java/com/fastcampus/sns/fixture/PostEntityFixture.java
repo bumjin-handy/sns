@@ -1,0 +1,19 @@
+package com.fastcampus.sns.fixture;
+
+import com.fastcampus.sns.model.entity.PostEntity;
+import com.fastcampus.sns.model.entity.UserEntity;
+
+public class PostEntityFixture {
+
+    public static PostEntity get(String userName, Integer postId) {
+        UserEntity user = new UserEntity();
+        user.setId(1);
+        user.setUserName(userName);
+
+        PostEntity result = new PostEntity();
+        result.setId(postId);
+        result.setUser(user);
+
+        return result;
+    }
+}
