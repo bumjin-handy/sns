@@ -1,8 +1,10 @@
 package com.fastcampus.sns.util;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
 import java.nio.charset.StandardCharsets;
@@ -12,7 +14,32 @@ import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.util.Date;
 
+import static java.security.KeyRep.Type.SECRET;
+
 public class JwtTokenUtils {
+
+    public static String userName(String token, String key) {
+        return extractClaims(token, key).get("userName", String.class);
+    }
+
+    public static boolean isExpired(String token, String key) {
+        Date expirationDate = extractClaims(token, key).getExpiration();
+        return expirationDate.before(new Date());
+    }
+    
+
+    private static Claims extractClaims(String token, String key) {
+        return Jwts.parser()
+                .setSigningKey(getSignKey(key))
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    private static Key getSignKey(String key) {
+        byte[] keyBytes = key.getBytes(StandardCharsets.UTF_8);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
 
     public static String generateToken(String userName, String key, long expiredTimeMs) {
         return Jwts.builder()
@@ -30,4 +57,6 @@ public class JwtTokenUtils {
         byte[] keyBytes = key.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(keyBytes);
     }
+
+
 }

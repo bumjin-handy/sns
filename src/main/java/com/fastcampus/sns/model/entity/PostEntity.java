@@ -54,13 +54,10 @@ public class PostEntity {
         this.updatedAt = Timestamp.from((Instant.now()));
     }
 
-    public static PostEntity of(String title, String body) {
+    public static PostEntity of(String title, String body, UserEntity userEntity) {
         PostEntity postEntity = new PostEntity();
         postEntity.setTitle(title);
         postEntity.setBody(body);
-            UserEntity userEntity = new UserEntity();
-            userEntity.setUserName("userName");
-            userEntity.setPassword("password");
         postEntity.setUser(userEntity);
         return postEntity;
     }

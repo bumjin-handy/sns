@@ -13,6 +13,6 @@ public class UserJoinResponse {
     private UserRole userRole;
 
     public static UserJoinResponse fromUser(User user) {
-        return new UserJoinResponse(user.getId(), user.getUserName(), user.getRole());
+        return new UserJoinResponse(user.getId(), user.getUsername(), user.getRole());
     }
 }
