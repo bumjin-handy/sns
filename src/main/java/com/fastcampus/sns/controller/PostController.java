@@ -7,8 +7,11 @@ import com.fastcampus.sns.controller.response.Response;
 import com.fastcampus.sns.model.Post;
 import com.fastcampus.sns.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
 
 @RestController
 @RequestMapping("/api/v1/posts")
@@ -38,4 +41,16 @@ public class PostController {
         postService.delete(authentication.getName(), postId);
         return Response.success();
     }
+
+    @GetMapping
+    public Response<Page<PostResponse>> list(Pageable pagable, Authentication authentication) {
+        return Response.success(postService.list(pagable).map(PostResponse::fromPost));
+    }
+
+    @GetMapping
+    public Response<Page<PostResponse>> my(Pageable pagable, Authentication authentication) {
+        return Response.success(postService.my(authentication.getName(), pagable).map(PostResponse::fromPost));
+    }
+
+
 }
