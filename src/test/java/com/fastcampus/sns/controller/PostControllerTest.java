@@ -184,6 +184,6 @@ public class PostControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                         //add request body
                 ).andDo(print())
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isNotFound());
     }
 }
