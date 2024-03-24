@@ -5,6 +5,8 @@ import com.fastcampus.sns.controller.request.PostModifyRequest;
 import com.fastcampus.sns.controller.request.UserJoinRequest;
 import com.fastcampus.sns.exception.ErrorCode;
 import com.fastcampus.sns.exception.SnsApplicationException;
+import com.fastcampus.sns.fixture.PostEntityFixture;
+import com.fastcampus.sns.model.Post;
 import com.fastcampus.sns.model.User;
 import com.fastcampus.sns.service.PostService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -64,11 +66,14 @@ public class PostControllerTest {
                 .andExpect(status().isUnauthorized());
     }
 
+
     @Test
     @WithMockUser
     void 포스트수정() throws Exception{
         String title = "title";
         String body = "body";
+        when(postService.modify(eq(title), eq(body), any(), any()))
+                .thenReturn(Post.fromEntity(PostEntityFixture.get("userName", 1, 1)));
 
         mockMvc.perform(put("/api/v1/posts/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -77,6 +82,7 @@ public class PostControllerTest {
                 ).andDo(print())
                 .andExpect(status().isOk());
     }
+
 
     @Test
     @WithAnonymousUser
