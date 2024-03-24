@@ -21,8 +21,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -120,7 +119,7 @@ public class PostControllerTest {
 
     @Test
     @WithMockUser
-    void 포스트수정시_수정하려는_글이_없는경우_에러발생() throws Exception{
+    void 포스트수정시_수정하려는_글이_없는경우_에러발생() throws Exception {
         String title = "title";
         String body = "body";
         Integer postId = 1;
@@ -136,5 +135,55 @@ public class PostControllerTest {
                         .content(objectMapper.writeValueAsBytes(new PostModifyRequest(title, body)))
                 ).andDo(print())
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser
+    void 포스트삭제() throws Exception {
+
+        mockMvc.perform(delete("/api/v1/posts/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        //add request body
+                ).andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithAnonymousUser
+    void 포스트삭제시_로그인하지_않은경우() throws Exception {
+
+        mockMvc.perform(delete("/api/v1/posts/1")
+                                .contentType(MediaType.APPLICATION_JSON)
+                        //add request body
+                ).andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser
+    void 포스트삭제시_작성자와_삭제요청자가_다른경우() throws Exception {
+
+        //mock
+        doThrow(new SnsApplicationException(ErrorCode.INVALID_PERMISSION)).when(postService).delete(any(), any());
+
+        mockMvc.perform(delete("/api/v1/posts/1")
+                                .contentType(MediaType.APPLICATION_JSON)
+                        //add request body
+                ).andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser
+    void 포스트삭제시_삭제하려는_포스트가_존재하지_않는경우() throws Exception {
+
+        //mock
+        doThrow(new SnsApplicationException(ErrorCode.POST_NOT_FOUND)).when(postService).delete(any(), any());
+
+        mockMvc.perform(delete("/api/v1/posts/1")
+                                .contentType(MediaType.APPLICATION_JSON)
+                        //add request body
+                ).andDo(print())
+                .andExpect(status().isUnauthorized());
     }
 }
