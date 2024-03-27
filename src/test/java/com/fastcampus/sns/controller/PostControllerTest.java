@@ -192,6 +192,7 @@ public class PostControllerTest {
     @WithMockUser
     void 피드목록() throws Exception {
         //TODO: mocking
+        when(postService.list(any())).thenReturn(Page.empty());
         mockMvc.perform(get("/api/v1/posts")
                                 .contentType(MediaType.APPLICATION_JSON)
                         //add request body
@@ -203,7 +204,7 @@ public class PostControllerTest {
     @WithAnonymousUser
     void 피드목록요청시_로그인하지_않은경우() throws Exception {
         //TODO: mocking
-        mockMvc.perform(delete("/api/v1/posts")
+        mockMvc.perform(get("/api/v1/posts")
                                 .contentType(MediaType.APPLICATION_JSON)
                         //add request body
                 ).andDo(print())
@@ -214,7 +215,7 @@ public class PostControllerTest {
     @WithMockUser
     void 내피드목록() throws Exception {
         //TODO: mocking
-        when(postService.list(any())).thenReturn(Page.empty());
+        when(postService.my(any(), any())).thenReturn(Page.empty());
 
 
         mockMvc.perform(get("/api/v1/posts/my")
@@ -229,9 +230,7 @@ public class PostControllerTest {
     void 내피드목록요청시_로그인하지_않은경우() throws Exception {
         //TODO: mocking
         when(postService.my(any(), any())).thenReturn(Page.empty());
-
-
-        mockMvc.perform(delete("/api/v1/posts/my")
+        mockMvc.perform(get("/api/v1/posts/my")
                                 .contentType(MediaType.APPLICATION_JSON)
                         //add request body
                 ).andDo(print())

@@ -30,18 +30,26 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     private final UserService userService;
 
+    private final static List<String> TOKEN_IN_PARAM_URLS = List.of("/api/v1/users/alarm/subscribe");
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if(authHeader == null || !authHeader.startsWith("Bearer ")){
-            log.error("Error occurs while getting header. header is null or invalid");
-            filterChain.doFilter(request, response);
-            return;
-        }
+
+        final String header = request.getHeader(HttpHeaders.AUTHORIZATION);
+        final String token;
 
         try {
-            String token = authHeader.substring(7);
-            ;
+            if (TOKEN_IN_PARAM_URLS.contains(request.getRequestURI())) {
+                log.info("Request with {} check the query param", request.getRequestURI());
+                token = request.getQueryString().split("=")[1].trim();
+            } else if (header == null || !header.startsWith("Bearer ")) {
+                log.error("Authorization Header does not start with Bearer {}", request.getRequestURI());
+                filterChain.doFilter(request, response);
+                return;
+            } else {
+                token = header.split(" ")[1].trim();
+            }
 
             // check token is valid
             if (JwtTokenUtils.isExpired(token, key)) {

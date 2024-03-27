@@ -4,6 +4,7 @@ import com.fastcampus.sns.configuration.filter.JwtTokenFilter;
 import com.fastcampus.sns.exception.CustomAuthenticationEntryPoint;
 import com.fastcampus.sns.service.UserService;
 import jakarta.servlet.Filter;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -30,31 +31,35 @@ public class AuthenticationConfig {
     @Value("${jwt.secret-key}")
     private String key;
 
-    private static final String[] AUTH_WHITELIST = {
-            "/api/*/users/join",
-            "/api/*/users/login"
-    };
-
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
-                        .requestMatchers("/api/*/users/join").permitAll()
-                        .requestMatchers("/api/*/users/login").permitAll()
-                        .anyRequest().authenticated()
-                )
                 .csrf((csrf) -> csrf
                         .disable())
+                .addFilterBefore(new JwtTokenFilter(key, userService), UsernamePasswordAuthenticationFilter.class)
+                .authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
+                        .requestMatchers("/api/**").permitAll()
+                        .requestMatchers("/api/*/users/join").permitAll()
+                        .requestMatchers("/api/*/users/login").permitAll()
+                        .anyRequest().permitAll()
+                )
                 .sessionManagement((sessionManagement) ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .headers((headers) -> headers
                         .addHeaderWriter(new XFrameOptionsHeaderWriter(
                                 XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
                 )
-                .httpBasic((httpBasic) -> httpBasic.authenticationEntryPoint(new CustomAuthenticationEntryPoint()))
-                .exceptionHandling((exceptionHandling) -> exceptionHandling.accessDeniedPage("/403"));
+                //.exceptionHandling((exceptionHandling) -> exceptionHandling.accessDeniedPage("/403"))
+                .exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(
+                                new CustomAuthenticationEntryPoint())
+                /*(request, response, exception) -> {
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, exception.getMessage());
+                })*/
+                )
+                //.httpBasic((httpBasic) -> httpBasic.authenticationEntryPoint(new CustomAuthenticationEntryPoint()));
+                //
         ;
-        http.addFilterBefore(new JwtTokenFilter(key, userService), UsernamePasswordAuthenticationFilter.class);
+        ;
 
         return http.build();
     }
