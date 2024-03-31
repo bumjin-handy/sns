@@ -14,6 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class PostService {
@@ -91,6 +93,16 @@ public class PostService {
         });
         //  likeEntityRepository
         likeEntityRepository.save(LikeEntity.of(userEntity, postEntity));
-        //return likeEntityRepository.
+    }
+
+    @Transactional
+    public int likeCount(Integer postId) {
+        // post exist
+        PostEntity postEntity = postEntityRepository.findById(postId).orElseThrow(() ->
+                new SnsApplicationException(ErrorCode.POST_NOT_FOUND, String.format("%s not found", postId)));
+
+        //  check liked -> throw
+        List<LikeEntity> likeEntities = likeEntityRepository.findAllByPost(postEntity);
+        return likeEntities.size();
     }
 }
