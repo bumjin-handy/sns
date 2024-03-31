@@ -1,7 +1,6 @@
 package com.fastcampus.sns.controller.response;
 
 import com.fastcampus.sns.model.Post;
-import com.fastcampus.sns.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
