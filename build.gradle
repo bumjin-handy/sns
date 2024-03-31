@@ -34,6 +34,10 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'org.postgresql:postgresql'
+// https://mvnrepository.com/artifact/com.vladmihalcea/hibernate-types-60
+	implementation 'com.vladmihalcea:hibernate-types-60:2.21.1'
+
+
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
@@ -62,8 +66,8 @@ task cleanFrontEnd(type: Delete) {
 	delete "$projectDir/front-end/static", "$projectDir/front-end/node_modules"
 }
 
-npmBuild.dependsOn npmInstall
+/*npmBuild.dependsOn npmInstall
 copyFrontEnd.dependsOn npmBuild
 compileJava.dependsOn copyFrontEnd
 
-clean.dependsOn cleanFrontEnd
+clean.dependsOn cleanFrontEnd*/
