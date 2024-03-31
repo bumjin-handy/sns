@@ -63,7 +63,7 @@ public class PostControllerTest {
                         //add request body
                         .content(objectMapper.writeValueAsBytes(new PostCreateRequest(title, body)))
                 ).andDo(print())
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().is(ErrorCode.INVALID_TOKEN.getStatus().value()));
     }
 
 
@@ -95,7 +95,7 @@ public class PostControllerTest {
                         //add request body
                         .content(objectMapper.writeValueAsBytes(new PostModifyRequest(title, body)))
                 ).andDo(print())
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().is(ErrorCode.INVALID_TOKEN.getStatus().value()));
     }
 
     @Test
@@ -157,7 +157,7 @@ public class PostControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                         //add request body
                 ).andDo(print())
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().is(ErrorCode.INVALID_TOKEN.getStatus().value()));
     }
 
     @Test
@@ -208,15 +208,13 @@ public class PostControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                         //add request body
                 ).andDo(print())
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().is(ErrorCode.INVALID_TOKEN.getStatus().value()));
     }
 
     @Test
     @WithMockUser
     void 내피드목록() throws Exception {
-        //TODO: mocking
         when(postService.my(any(), any())).thenReturn(Page.empty());
-
 
         mockMvc.perform(get("/api/v1/posts/my")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -228,12 +226,43 @@ public class PostControllerTest {
     @Test
     @WithAnonymousUser
     void 내피드목록요청시_로그인하지_않은경우() throws Exception {
-        //TODO: mocking
         when(postService.my(any(), any())).thenReturn(Page.empty());
         mockMvc.perform(get("/api/v1/posts/my")
                                 .contentType(MediaType.APPLICATION_JSON)
                         //add request body
                 ).andDo(print())
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().is(ErrorCode.INVALID_TOKEN.getStatus().value()));
+    }
+
+    @Test
+    @WithMockUser
+    void 좋아요기능() throws Exception {
+        mockMvc.perform(post("/api/v1/posts/1/likes")
+                                .contentType(MediaType.APPLICATION_JSON)
+                        //add request body
+                ).andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithAnonymousUser
+    void 좋아요버튼클릭시_로그인하지_않은경우() throws Exception {
+        mockMvc.perform(post("/api/v1/posts/1/likes")
+                                .contentType(MediaType.APPLICATION_JSON)
+                        //add request body
+                ).andDo(print())
+                .andExpect(status().is(ErrorCode.INVALID_TOKEN.getStatus().value()));
+    }
+
+    @Test
+    @WithMockUser
+    void 좋아요버튼클릭시_게시물이_없는경우() throws Exception {
+        doThrow(new SnsApplicationException(ErrorCode.POST_NOT_FOUND))
+                .when(postService).like(any(), any());
+        mockMvc.perform(post("/api/v1/posts/1/likes")
+                                .contentType(MediaType.APPLICATION_JSON)
+                        //add request body
+                ).andDo(print())
+                .andExpect(status().isNotFound());
     }
 }
