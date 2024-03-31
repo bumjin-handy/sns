@@ -1,4 +1,4 @@
-package com.fastcampus.sns.service;
+package com.fastcampus.sns.repository;
 
 import com.fastcampus.sns.model.entity.LikeEntity;
 import com.fastcampus.sns.model.entity.PostEntity;
