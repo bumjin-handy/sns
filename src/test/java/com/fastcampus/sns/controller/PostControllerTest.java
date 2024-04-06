@@ -73,7 +73,7 @@ public class PostControllerTest {
     void 포스트수정() throws Exception{
         String title = "title";
         String body = "body";
-        when(postService.modify(eq(title), eq(body), any(), any()))
+        when(postService.modify(any(), eq(title), eq(body), any()))
                 .thenReturn(Post.fromEntity(PostEntityFixture.get("userName", 1, 1)));
 
         mockMvc.perform(put("/api/v1/posts/1")
@@ -108,7 +108,7 @@ public class PostControllerTest {
 
         //  mocking
         doThrow(new SnsApplicationException(ErrorCode.INVALID_PERMISSION))
-                .when(postService).modify(eq(title), eq(body), any(), eq(postId));
+                .when(postService).modify(any(), eq(title), eq(body),eq(postId));
         //  TODO :
 
         mockMvc.perform(put("/api/v1/posts/"+postId)
@@ -128,7 +128,7 @@ public class PostControllerTest {
         //  mocking
         //  mocking
         doThrow(new SnsApplicationException(ErrorCode.POST_NOT_FOUND))
-                .when(postService).modify(eq(title), eq(body), any(), eq(postId));
+                .when(postService).modify(any(), eq(title), eq(body), eq(postId));
 
         //  TODO :
         mockMvc.perform(put("/api/v1/posts/"+postId)

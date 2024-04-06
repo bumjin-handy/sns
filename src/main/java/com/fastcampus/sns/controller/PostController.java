@@ -7,7 +7,9 @@ import com.fastcampus.sns.controller.response.CommentResponse;
 import com.fastcampus.sns.controller.response.PostResponse;
 import com.fastcampus.sns.controller.response.Response;
 import com.fastcampus.sns.model.Post;
+import com.fastcampus.sns.model.User;
 import com.fastcampus.sns.service.PostService;
+import com.fastcampus.sns.util.ClassUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,15 +34,15 @@ public class PostController {
 
     @PutMapping("/{postId}")
     public Response<PostResponse> modify(@PathVariable Integer postId, @RequestBody PostModifyRequest request, Authentication authentication) {
-
-        Post post = postService.modify(request.getTitle(), request.getBody(), authentication.getName(), postId);
+        User user = ClassUtils.getSafeCastInstance(authentication.getPrincipal(), User.class);
+        Post post = postService.modify(user.getId(), request.getTitle(), request.getBody(), postId);
         return Response.success(PostResponse.fromPost(post));
     }
 
     @DeleteMapping("/{postId}")
     public Response<Void> delete(@PathVariable Integer postId, Authentication authentication) {
-
-        postService.delete(authentication.getName(), postId);
+        User user = ClassUtils.getSafeCastInstance(authentication.getPrincipal(), User.class);
+        postService.delete(user.getId(), postId);
         return Response.success();
     }
 
@@ -51,7 +53,8 @@ public class PostController {
 
     @GetMapping("/my")
     public Response<Page<PostResponse>> my(Pageable pagable, Authentication authentication) {
-        return Response.success(postService.my(authentication.getName(), pagable).map(PostResponse::fromPost));
+        User user = ClassUtils.getSafeCastInstance(authentication.getPrincipal(), User.class);
+        return Response.success(postService.my(user.getId(), pagable).map(PostResponse::fromPost));
     }
 
     @PostMapping("/{postId}/likes")
@@ -61,7 +64,7 @@ public class PostController {
     }
 
     @GetMapping("/{postId}/likes")
-    public Response<Integer> likeCount(@PathVariable Integer postId, Authentication authentication) {
+    public Response<Long> likeCount(@PathVariable Integer postId, Authentication authentication) {
         return Response.success(postService.likeCount(postId));
     }
 

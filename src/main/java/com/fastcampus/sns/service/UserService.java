@@ -62,9 +62,8 @@ public class UserService {
     }
 
     //  TODO: alaram return
-    public Page<Alarm> alarmList(String userName, Pageable pageable) {
+    public Page<Alarm> alarmList(Integer userId, Pageable pageable) {
 //  회원가입 여부 체크
-        UserEntity userEntity = userRepository.findByUserName((userName)).orElseThrow(() -> new SnsApplicationException(ErrorCode.USER_NOT_FOUND, String.format("%s not found.", userName)));
-        return alarmEntityRepository.findAllByUser(userEntity, pageable).map(Alarm::fromEntity);
+        return alarmEntityRepository.findAllByUserId(userId, pageable).map(Alarm::fromEntity);
     }
 }

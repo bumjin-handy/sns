@@ -26,7 +26,7 @@ public class Comment {
                 entity.getPost().getId(),
                 entity.getRegisteredAt(),
                 entity.getUpdatedAt(),
-                entity.getDeletedAt()
+                entity.getRemovedAt()
         );
 
     }

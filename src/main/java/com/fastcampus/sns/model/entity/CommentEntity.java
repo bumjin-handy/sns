@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.Where;
 
 import java.sql.Timestamp;
@@ -16,8 +17,8 @@ import java.time.Instant;
 })
 @Getter
 @Setter
-@SQLDelete(sql = "UPDATE \"comment\" SET deleted_at = NOW() where id = ?")
-@Where(clause = "deleted_at is NULL")
+@SQLDelete(sql = "UPDATE \"comment\" SET removed_at = NOW() where id = ?")
+@SQLRestriction("removed_at is NULL")
 @NoArgsConstructor
 
 public class CommentEntity {
@@ -42,8 +43,8 @@ public class CommentEntity {
     @Column(name="updated_at")
     private Timestamp updatedAt;
 
-    @Column(name="deleted_at")
-    private Timestamp deletedAt;
+    @Column(name="removed_at")
+    private Timestamp removedAt;
 
     @PrePersist
     void registeredAt() {

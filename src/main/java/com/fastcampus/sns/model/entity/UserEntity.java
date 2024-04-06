@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.Where;
 
 import java.sql.Timestamp;
@@ -15,8 +16,8 @@ import java.time.Instant;
 @Table(name="\"user\"")
 @Getter
 @Setter
-@SQLDelete(sql = "UPDATE \"user\" SET deleted_at = NOW() where id = ?")
-@Where(clause = "deleted_at is NULL")
+@SQLDelete(sql = "UPDATE \"user\" SET removed_at = NOW() where id = ?")
+@SQLRestriction("removed_at is NULL")
 @NoArgsConstructor
 
 public class UserEntity {
@@ -40,8 +41,8 @@ public class UserEntity {
     @Column(name="updated_at")
     private Timestamp updatedAt;
 
-    @Column(name="deleted_at")
-    private Timestamp deletedAt;
+    @Column(name="removed_at")
+    private Timestamp removedAt;
 
     @PrePersist
     void registeredAt() {

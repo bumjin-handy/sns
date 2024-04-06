@@ -3,13 +3,12 @@ package com.fastcampus.sns.model.entity;
 import com.fastcampus.sns.model.AlarmArgs;
 import com.fastcampus.sns.model.AlarmType;
 import jakarta.persistence.*;
+import jakarta.persistence.Index;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.*;
 import org.hibernate.type.SqlTypes;
 
 import java.sql.Timestamp;
@@ -22,7 +21,7 @@ import java.time.Instant;
 @Getter
 @Setter
 @SQLDelete(sql = "UPDATE \"alarm\" SET deleted_at = NOW() where id = ?")
-@Where(clause = "deleted_at is NULL")
+@SQLRestriction("removed_at is NULL")
 @NoArgsConstructor
 
 public class AlarmEntity {
@@ -31,7 +30,7 @@ public class AlarmEntity {
     private Integer id;
 
     //  알림을 받은 사람
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
@@ -49,8 +48,8 @@ public class AlarmEntity {
     @Column(name="updated_at")
     private Timestamp updatedAt;
 
-    @Column(name="deleted_at")
-    private Timestamp deletedAt;
+    @Column(name="removed_at")
+    private Timestamp removedAt;
 
     @PrePersist
     void registeredAt() {

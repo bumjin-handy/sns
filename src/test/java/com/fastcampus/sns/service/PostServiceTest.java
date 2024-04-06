@@ -77,7 +77,7 @@ public class PostServiceTest {
         when(postEntityRepository.findById(postId)).thenReturn(Optional.of(postEntity));
         when(postEntityRepository.saveAndFlush(any())).thenReturn(postEntity);
 
-        Assertions.assertDoesNotThrow(() -> postService.modify(title, body, userName, postId));
+        Assertions.assertDoesNotThrow(() -> postService.modify(1, title, body, postId));
     }
 
     @Test
@@ -94,7 +94,7 @@ public class PostServiceTest {
 
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(mock(UserEntity.class)));
         when(postEntityRepository.findById(postId)).thenReturn(Optional.empty());
-        SnsApplicationException e = Assertions.assertThrows(SnsApplicationException.class, () -> postService.modify(title, body, userName, postId));
+        SnsApplicationException e = Assertions.assertThrows(SnsApplicationException.class, () -> postService.modify(1, title, body, postId));
         Assertions.assertEquals(ErrorCode.POST_NOT_FOUND, e.getErrorCode());
     }
 
@@ -114,7 +114,7 @@ public class PostServiceTest {
         when(postEntityRepository.findById(postId)).thenReturn(Optional.of(postEntity));
 
         SnsApplicationException e = Assertions.assertThrows(SnsApplicationException.class, () ->
-                postService.modify(title, body, userName, postId));
+                postService.modify(1, title, body, postId));
         Assertions.assertEquals(ErrorCode.INVALID_PERMISSION, e.getErrorCode());
     }
 
@@ -131,7 +131,7 @@ public class PostServiceTest {
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(userEntity));
         when(postEntityRepository.findById(postId)).thenReturn(Optional.of(postEntity));
 
-        Assertions.assertDoesNotThrow(() -> postService.delete(userName, postId));
+        Assertions.assertDoesNotThrow(() -> postService.delete(userEntity.getId(), postId));
     }
 
     @Test
@@ -147,7 +147,7 @@ public class PostServiceTest {
         when(postEntityRepository.findById(postId)).thenReturn(Optional.empty());
 
         SnsApplicationException e = Assertions.assertThrows(SnsApplicationException.class, () ->
-                postService.delete(userName, 1));
+                postService.delete(userEntity.getId(), 1));
         Assertions.assertEquals(ErrorCode.POST_NOT_FOUND, e.getErrorCode());
     }
 
@@ -164,7 +164,7 @@ public class PostServiceTest {
         when(postEntityRepository.findById(postId)).thenReturn(Optional.of(postEntity));
 
         SnsApplicationException e = Assertions.assertThrows(SnsApplicationException.class, () ->
-                postService.delete(userName, 1));
+                postService.delete(writer.getId(), 1));
         Assertions.assertEquals(ErrorCode.INVALID_PERMISSION, e.getErrorCode());
     }
 
@@ -181,11 +181,9 @@ public class PostServiceTest {
     void 내피드목록요청이_성공한경우() {
         //mocking
         Pageable pagable = mock(Pageable.class);
-        UserEntity user = mock(UserEntity.class);
-        when(userEntityRepository.findByUserName(any())).thenReturn(Optional.of(user));
-        when(postEntityRepository.findAllByUser(user, pagable)).thenReturn(Page.empty());
+        when(postEntityRepository.findAllByUserId(any(), pagable)).thenReturn(Page.empty());
 
-        Assertions.assertDoesNotThrow(() -> postService.my("", pagable));
+        Assertions.assertDoesNotThrow(() -> postService.my(1, pagable));
     }
 
 
