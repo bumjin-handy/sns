@@ -21,7 +21,7 @@ public class PostResponse {
 
     private Timestamp updatedAt;
 
-    private Timestamp deletedAt;
+    private Timestamp removedAt;
 
     public static PostResponse fromPost(Post post) {
         return new PostResponse(
@@ -31,6 +31,6 @@ public class PostResponse {
                 UserResponse.fromUser(post.getUser()),
                 post.getRegisteredAt(),
                 post.getUpdatedAt(),
-                post.getDeletedAt());
+                post.getRemovedAt());
     }
 }

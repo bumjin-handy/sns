@@ -48,6 +48,9 @@ public class AuthenticationConfig {
                                         AntPathRequestMatcher.antMatcher("/api/*/users/login")
                                 ).permitAll()
                                 .requestMatchers(
+                                        AntPathRequestMatcher.antMatcher("/api/*/users/alarm/subscribe/*")
+                                ).permitAll()
+                                .requestMatchers(
                                         AntPathRequestMatcher.antMatcher("/api/**")
                                 ).authenticated()
                                 .anyRequest().permitAll()

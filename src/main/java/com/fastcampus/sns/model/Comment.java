@@ -16,7 +16,7 @@ public class Comment {
     private Integer postId;
     private Timestamp registeredAt;
     private Timestamp updatedAt;
-    private Timestamp deletedAt;
+    private Timestamp removedAt;
 
     public static Comment fromEntity(CommentEntity entity) {
         return new Comment(

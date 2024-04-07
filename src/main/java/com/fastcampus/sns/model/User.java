@@ -28,7 +28,7 @@ public class User implements UserDetails {
     private UserRole role;
     private Timestamp registeredAt;
     private Timestamp updatedAt;
-    private Timestamp deletedAt;
+    private Timestamp removedAt;
 
     public static User fromEntity(UserEntity entity) {
         return new User(
@@ -52,24 +52,24 @@ public class User implements UserDetails {
     @Override
     @JsonIgnore
     public boolean isAccountNonExpired() {
-        return this.deletedAt == null;
+        return this.removedAt == null;
     }
 
     @Override
     @JsonIgnore
     public boolean isAccountNonLocked() {
-        return this.deletedAt == null;
+        return this.removedAt == null;
     }
 
     @Override
     @JsonIgnore
     public boolean isCredentialsNonExpired() {
-        return this.deletedAt == null;
+        return this.removedAt == null;
     }
 
     @Override
     @JsonIgnore
     public boolean isEnabled() {
-        return this.deletedAt == null;
+        return this.removedAt == null;
     }
 }

@@ -15,7 +15,7 @@ import java.time.Instant;
 @Table(name="\"post\"")
 @Getter
 @Setter
-@SQLDelete(sql = "UPDATE \"post\" SET deleted_at = NOW() where id = ?")
+@SQLDelete(sql = "UPDATE \"post\" SET removed_at = NOW() where id = ?")
 @SQLRestriction("removed_at is NULL")
 @NoArgsConstructor
 
@@ -40,8 +40,8 @@ public class PostEntity {
     @Column(name="updated_at")
     private Timestamp updatedAt;
 
-    @Column(name="deleted_at")
-    private Timestamp deletedAt;
+    @Column(name="removed_at")
+    private Timestamp removedAt;
 
     @PrePersist
     void registeredAt() {

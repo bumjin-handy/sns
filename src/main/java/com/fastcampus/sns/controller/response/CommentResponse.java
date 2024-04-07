@@ -15,7 +15,7 @@ public class CommentResponse {
     private Integer postId;
     private Timestamp registeredAt;
     private Timestamp updatedAt;
-    private Timestamp deletedAt;
+    private Timestamp removedAt;
 
     public static CommentResponse fromComment(Comment comment) {
         return new CommentResponse(
@@ -25,6 +25,6 @@ public class CommentResponse {
                 comment.getPostId(),
                 comment.getRegisteredAt(),
                 comment.getUpdatedAt(),
-                comment.getDeletedAt());
+                comment.getRemovedAt());
     }
 }

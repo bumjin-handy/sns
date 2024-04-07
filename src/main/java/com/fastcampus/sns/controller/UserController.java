@@ -7,6 +7,7 @@ import com.fastcampus.sns.controller.response.Response;
 import com.fastcampus.sns.controller.response.UserJoinResponse;
 import com.fastcampus.sns.controller.response.UserLoginResponse;
 import com.fastcampus.sns.model.User;
+import com.fastcampus.sns.service.AlarmService;
 import com.fastcampus.sns.service.UserService;
 import com.fastcampus.sns.util.ClassUtils;
 import lombok.RequiredArgsConstructor;
@@ -14,12 +15,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final AlarmService alarmService;
 
     // TODO: implement
     @PostMapping("/join")
@@ -38,5 +41,11 @@ public class UserController {
     public Response<Page<AlarmResponse>> alram(Pageable pageable, Authentication authentication) {
         User user = ClassUtils.getSafeCastInstance(authentication.getPrincipal(), User.class);
         return Response.success(userService.alarmList(user.getId(), pageable).map(AlarmResponse::fromAlarm));
+    }
+
+    @GetMapping("/alarm/subscribe")
+    public SseEmitter subscribe(Authentication authentication) {
+        User user = ClassUtils.getSafeCastInstance(authentication.getPrincipal(), User.class);
+        return alarmService.connectAlarm(user.getId());
     }
 }

@@ -20,7 +20,7 @@ import java.time.Instant;
 })
 @Getter
 @Setter
-@SQLDelete(sql = "UPDATE \"alarm\" SET deleted_at = NOW() where id = ?")
+@SQLDelete(sql = "UPDATE \"alarm\" SET removed_at = NOW() where id = ?")
 @SQLRestriction("removed_at is NULL")
 @NoArgsConstructor
 
@@ -61,11 +61,11 @@ public class AlarmEntity {
         this.updatedAt = Timestamp.from((Instant.now()));
     }
 
-    public static AlarmEntity of(UserEntity userEntity, AlarmType alarmType, AlarmArgs alarmArgs) {
+    public static AlarmEntity of(AlarmType alarmType, AlarmArgs args, UserEntity user) {
         AlarmEntity entity = new AlarmEntity();
-        entity.setUser(userEntity);
         entity.setAlarmType(alarmType);
-        entity.setArgs(alarmArgs);
+        entity.setArgs(args);
+        entity.setUser(user);
         return entity;
     }
 }

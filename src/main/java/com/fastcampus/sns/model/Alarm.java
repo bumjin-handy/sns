@@ -14,7 +14,7 @@ public class Alarm {
     private AlarmArgs args;
     private Timestamp registeredAt;
     private Timestamp updatedAt;
-    private Timestamp deletedAt;
+    private Timestamp removedAt;
 
     public static Alarm fromEntity(AlarmEntity entity) {
         return new Alarm(entity.getId(),

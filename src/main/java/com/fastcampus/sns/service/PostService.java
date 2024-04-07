@@ -25,6 +25,8 @@ public class PostService {
     private final LikeEntityRepository likeEntityRepository;
     private final CommentEntityRepository commentEntityRepository;
     private final AlarmEntityRepository alarmEntityRepository;
+    private final AlarmService alarmService;
+
     @Transactional
     public void create(String title, String body, String userName) {
         // user find
@@ -85,7 +87,7 @@ public class PostService {
         //  likeEntityRepository
         likeEntityRepository.save(LikeEntity.of(userEntity, postEntity));
 
-        alarmEntityRepository.save(AlarmEntity.of(postEntity.getUser(), AlarmType.NEW_LIKE_ON_POST, new AlarmArgs(userEntity.getId(), postEntity.getId())));
+        alarmEntityRepository.save(AlarmEntity.of(AlarmType.NEW_LIKE_ON_POST, new AlarmArgs(userEntity.getId(), postId), postEntity.getUser()));
     }
 
     @Transactional
@@ -97,7 +99,7 @@ public class PostService {
         /*List<LikeEntity> likeEntities = likeEntityRepository.findAllByPost(postEntity);
         return likeEntities.size();*/
 
-         return likeEntityRepository.countByPost(postEntity);
+        return likeEntityRepository.countByPost(postEntity);
     }
 
     @Transactional
@@ -111,7 +113,7 @@ public class PostService {
         commentEntityRepository.save(CommentEntity.of(userEntity, postEntity, comment));
 
         //
-        alarmEntityRepository.save(AlarmEntity.of(postEntity.getUser(), AlarmType.NEW_COMMENT_ON_POST, new AlarmArgs(userEntity.getId(), postEntity.getId())));
+        alarmEntityRepository.save(AlarmEntity.of(AlarmType.NEW_COMMENT_ON_POST, new AlarmArgs(userEntity.getId(), postId), postEntity.getUser()));
     }
 
     private PostEntity getPostOrException(Integer postId) {

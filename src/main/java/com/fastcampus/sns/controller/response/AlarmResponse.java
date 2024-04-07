@@ -18,7 +18,7 @@ public class AlarmResponse {
     private String text;
     private Timestamp registeredAt;
     private Timestamp updatedAt;
-    private Timestamp deletedAt;
+    private Timestamp removedAt;
 
     public static AlarmResponse fromAlarm(Alarm alarm) {
         return new AlarmResponse(alarm.getId(),
@@ -27,7 +27,7 @@ public class AlarmResponse {
                 alarm.getAlarmType().getAlarmText(),
                 alarm.getRegisteredAt(),
                 alarm.getUpdatedAt(),
-                alarm.getDeletedAt()
+                alarm.getRemovedAt()
         );
     }
 }
